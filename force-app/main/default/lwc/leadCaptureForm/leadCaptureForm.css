@@ -1,0 +1,5 @@
+.notes-counter {
+  color: var(--lwc-colorTextWeak, #747474);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
