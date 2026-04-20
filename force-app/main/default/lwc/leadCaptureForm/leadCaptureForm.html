@@ -1,0 +1,120 @@
+<template>
+  <lightning-card title="Capture Lead" icon-name="standard:lead">
+    <div class="slds-p-around_medium">
+      <lightning-layout multiple-rows>
+        <lightning-layout-item
+          size="12"
+          medium-device-size="6"
+          class="slds-p-around_x-small"
+        >
+          <lightning-input
+            data-id="firstName"
+            label="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onchange={handleInputChange}
+          ></lightning-input>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+          size="12"
+          medium-device-size="6"
+          class="slds-p-around_x-small"
+        >
+          <lightning-input
+            data-id="lastName"
+            label="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            required
+            onchange={handleInputChange}
+          ></lightning-input>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+          size="12"
+          medium-device-size="6"
+          class="slds-p-around_x-small"
+        >
+          <lightning-input
+            data-id="email"
+            type="email"
+            label="Email"
+            name="email"
+            value={formData.email}
+            required
+            onchange={handleInputChange}
+          ></lightning-input>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+          size="12"
+          medium-device-size="6"
+          class="slds-p-around_x-small"
+        >
+          <lightning-input
+            data-id="phone"
+            type="tel"
+            label="Phone"
+            name="phone"
+            value={formData.phone}
+            onchange={handleInputChange}
+          ></lightning-input>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+          size="12"
+          medium-device-size="6"
+          class="slds-p-around_x-small"
+        >
+          <lightning-input
+            data-id="company"
+            label="Company"
+            name="company"
+            value={formData.company}
+            required
+            onchange={handleInputChange}
+          ></lightning-input>
+        </lightning-layout-item>
+
+        <lightning-layout-item
+          size="12"
+          medium-device-size="6"
+          class="slds-p-around_x-small"
+        >
+          <lightning-combobox
+            data-id="leadSource"
+            label="Lead Source"
+            name="leadSource"
+            value={formData.leadSource}
+            options={leadSourceOptions}
+            required
+            onchange={handleInputChange}
+          ></lightning-combobox>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="12" class="slds-p-around_x-small">
+          <lightning-textarea
+            data-id="notes"
+            label="Notes"
+            name="notes"
+            value={formData.notes}
+            maxlength="500"
+            onchange={handleInputChange}
+          ></lightning-textarea>
+          <div class="notes-counter">{notesRemaining} characters remaining</div>
+        </lightning-layout-item>
+      </lightning-layout>
+
+      <div class="slds-m-top_medium">
+        <lightning-button
+          data-id="submit"
+          variant="brand"
+          label="Create Lead"
+          onclick={handleSubmit}
+          disabled={isSaving}
+        ></lightning-button>
+      </div>
+    </div>
+  </lightning-card>
+</template>
