@@ -31,19 +31,23 @@ public with sharing class LeadCaptureController {
   }
 
   @AuraEnabled
-  public static LeadCaptureResponse createLead(LeadCaptureRequest requestData) {
-    validateRequest(requestData);
+  public static LeadCaptureResponse createLead(String requestData) {
+    LeadCaptureRequest req = (LeadCaptureRequest) JSON.deserialize(
+      requestData,
+      LeadCaptureRequest.class
+    );
+    validateRequest(req);
 
     try {
       Lead newLead = new Lead();
-      newLead.FirstName = trimOrNull(requestData.firstName);
-      newLead.LastName = requestData.lastName.trim();
-      newLead.Email = requestData.email.trim();
-      newLead.Phone = trimOrNull(requestData.phone);
-      newLead.Company = requestData.company.trim();
-      newLead.LeadSource = requestData.leadSource;
-      newLead.Source_Account__c = requestData.accountId;
-      newLead.Capture_Notes__c = trimOrNull(requestData.notes);
+      newLead.FirstName = trimOrNull(req.firstName);
+      newLead.LastName = req.lastName.trim();
+      newLead.Email = req.email.trim();
+      newLead.Phone = trimOrNull(req.phone);
+      newLead.Company = req.company.trim();
+      newLead.LeadSource = req.leadSource;
+      newLead.Source_Account__c = req.accountId;
+      newLead.Capture_Notes__c = trimOrNull(req.notes);
 
       insert newLead;
 

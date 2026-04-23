@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(sf data query --query \"SELECT SobjectType, PermissionsRead, PermissionsCreate FROM ObjectPermissions WHERE ParentId IN \\(SELECT Id FROM PermissionSet WHERE Name = 'Lead_Capture_Access'\\) AND SobjectType = 'Lead'\" --json)",
+      "PowerShell(sf data query --query \"SELECT Field, PermissionsRead, PermissionsEdit FROM FieldPermissions WHERE ParentId IN \\(SELECT Id FROM PermissionSet WHERE Name = 'Lead_Capture_Access'\\)\" --json)",
+      "PowerShell(sf data query --query \"SELECT ApexClassId, Enabled FROM SetupEntityAccess WHERE ParentId IN \\(SELECT Id FROM PermissionSet WHERE Name = 'Lead_Capture_Access'\\) AND SetupEntityType = 'ApexClass'\" --json)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_console_messages",
+      "Bash(sf data *)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_fill_form"
+    ]
+  }
+}
