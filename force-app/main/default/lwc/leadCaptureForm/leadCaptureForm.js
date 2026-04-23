@@ -50,19 +50,19 @@ export default class LeadCaptureForm extends LightningElement {
     }
 
     this.isSaving = true;
-
+    const leadParam = {
+      accountId: this.recordId,
+      firstName: this.formData.firstName,
+      lastName: this.formData.lastName,
+      email: this.formData.email,
+      phone: this.formData.phone,
+      company: this.formData.company,
+      leadSource: this.formData.leadSource,
+      notes: this.formData.notes
+    };
     try {
       const response = await createLead({
-        requestData: {
-          accountId: this.recordId,
-          firstName: this.formData.firstName,
-          lastName: this.formData.lastName,
-          email: this.formData.email,
-          phone: this.formData.phone,
-          company: this.formData.company,
-          leadSource: this.formData.leadSource,
-          notes: this.formData.notes
-        }
+        requestData: JSON.stringify(leadParam)
       });
 
       this.dispatchToast(

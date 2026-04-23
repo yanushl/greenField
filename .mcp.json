@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--browser", "chrome"]
+    },
+    "Salesforce DX": {
+      "command": "node",
+      "args": [
+        "C:/Users/Aliaksei_Yanushkevi1/AppData/Roaming/npm/node_modules/@salesforce/mcp/bin/run.js",
+        "--orgs",
+        "greenFieldProject",
+        "--toolsets",
+        "all"
+      ]
+    }
+  }
+}
