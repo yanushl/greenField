@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lead Capture Form — Solution Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "neutral",
+        fontFamily: "inherit"
+      });
+    </script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #1a1a2e;
+        background: #fff;
+        padding: 28px 36px;
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      /* ── Header ── */
+      header {
+        border-bottom: 3px solid #0070d2;
+        padding-bottom: 14px;
+        margin-bottom: 28px;
+      }
+      header h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0070d2;
+        letter-spacing: -0.3px;
+      }
+      header .meta {
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 4px;
+      }
+      header .meta span {
+        margin-right: 16px;
+      }
+
+      /* ── Sections ── */
+      section {
+        margin-bottom: 32px;
+      }
+      h2 {
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #0070d2;
+        border-left: 3px solid #0070d2;
+        padding-left: 8px;
+        margin-bottom: 14px;
+      }
+      h3 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin: 14px 0 6px;
+      }
+      p {
+        margin-bottom: 8px;
+        color: #374151;
+      }
+
+      /* ── Diagram containers ── */
+      .diagram-wrap {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+      .diagram-wrap .mermaid {
+        max-width: 100%;
+      }
+
+      /* ── Tables ── */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        margin-bottom: 8px;
+      }
+      thead tr {
+        background: #0070d2;
+        color: #fff;
+      }
+      thead th {
+        padding: 7px 10px;
+        text-align: left;
+        font-weight: 600;
+      }
+      tbody tr:nth-child(even) {
+        background: #f1f5f9;
+      }
+      tbody tr:hover {
+        background: #e0f0ff;
+      }
+      td {
+        padding: 6px 10px;
+        border-bottom: 1px solid #e5e7eb;
+        vertical-align: top;
+      }
+      td code,
+      th code {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 11px;
+      }
+
+      /* ── Badges ── */
+      .badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 1px 6px;
+        border-radius: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .badge-yes {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-no {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .badge-opt {
+        background: #fef9c3;
+        color: #92400e;
+      }
+
+      /* ── Two-column layout ── */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      /* ── Footer ── */
+      footer {
+        margin-top: 32px;
+        padding-top: 12px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 10px;
+        color: #9ca3af;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+        .diagram-wrap {
+          break-inside: avoid;
+        }
+        section {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Account Lead Capture Form — Solution Architecture</h1>
+      <div class="meta">
+        <span>Feature 002</span>
+        <span>LWC API 63.0 · Salesforce source 66.0</span>
+        <span>2026-04-24</span>
+      </div>
+    </header>
+
+    <!-- ── 1. Component Architecture ── -->
+    <section>
+      <h2>1 · Component Architecture</h2>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+          flowchart TD subgraph Page["⚡ Account Record Page"]
+          LCF["leadCaptureForm LWC\n─────────────────────\n@api recordId\n@wire
+          getRecord → Account.Name\nClient-side validation\nJSON payload
+          serialization"] end subgraph Apex["☁ Apex Layer"]
+          LCC["LeadCaptureController (with
+          sharing)\n─────────────────────────────────\ncreateLead(requestData:
+          String)\nJSON.deserialize → LeadCaptureRequest\nServer-side
+          validation\nDML: insert Lead"] end subgraph DB["🗄 Salesforce Data"]
+          ACC[(Account)] LEAD[(Lead\n─────────────\nFirstName / LastName\nEmail
+          / Phone\nCompany LeadSource\nSource_Account__c\nCapture_Notes__c)] end
+          subgraph Sec["🔒 Security"] PS["Permission
+          Set\nLead_Capture_Access\n─────────────────\nApex class access\nLead:
+          Create + Read\nFLS: custom fields R/W"] end ACC -->|"wire
+          getRecord\nAccount.Name"| LCF LCF -->|"@salesforce/apex\nJSON string"|
+          LCC LCC -->|"insert"| LEAD LEAD -. "Source_Account__c\nlookup" .-> ACC
+          PS -. "grants" .-> LCF PS -. "grants" .-> LCC style Page
+          fill:#e0f0ff,stroke:#0070d2 style Apex fill:#fff3cd,stroke:#f0a500
+          style DB fill:#d1fae5,stroke:#10b981 style Sec
+          fill:#fce7f3,stroke:#db2777
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 2. Data Flow ── -->
+    <section>
+      <h2>2 · Data Flow</h2>
+      <div class="diagram-wrap">
+        <div class="mermaid">
+          flowchart LR A([User fills form]) --> B{Client\nvalidation} B
+          -->|fail| C([Toast error\nabort]) B -->|pass|
+          D[JSON.stringify\npayload] D --> E[Apex\ncreateLead] E -->
+          F{Server\nvalidation} F -->|fail| G([AuraHandledException\n→ toast
+          error]) F -->|pass| H[(insert Lead)] H --> I([Success toast\nform
+          reset\nCompany preserved]) style A fill:#e0f0ff,stroke:#0070d2 style C
+          fill:#fee2e2,stroke:#dc2626 style G fill:#fee2e2,stroke:#dc2626 style
+          H fill:#d1fae5,stroke:#10b981 style I fill:#d1fae5,stroke:#10b981
+        </div>
+      </div>
+      <p style="font-size: 11px; color: #6b7280">
+        Validation is intentionally duplicated: client-side for immediate UX
+        feedback, server-side for data integrity regardless of caller.
+      </p>
+    </section>
+
+    <!-- ── 3. Security Model ── -->
+    <section>
+      <h2>3 · Security Model</h2>
+      <p>
+        All access is granted via the
+        <strong>Lead_Capture_Access</strong> permission set. The Apex controller
+        runs <code>with sharing</code>, enforcing record-level sharing rules.
+      </p>
+
+      <div class="two-col">
+        <div>
+          <h3>Permission Set grants</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Grant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Apex class</td>
+                <td><code>LeadCaptureController</code> — execute</td>
+              </tr>
+              <tr>
+                <td>Lead object</td>
+                <td>Create, Read</td>
+              </tr>
+              <tr>
+                <td>Lead object</td>
+                <td>
+                  <span class="badge badge-no">No</span> Edit, Delete, View All
+                </td>
+              </tr>
+              <tr>
+                <td>FLS <code>Source_Account__c</code></td>
+                <td>Read + Write</td>
+              </tr>
+              <tr>
+                <td>FLS <code>Capture_Notes__c</code></td>
+                <td>Read + Write</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Field-level security overview</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Read</th>
+                <th>Write</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Standard Lead fields<br /><em>(Name, Email, Phone…)</em>
+                </td>
+                <td><span class="badge badge-yes">Yes</span></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+              </tr>
+              <tr>
+                <td><code>Source_Account__c</code></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+              </tr>
+              <tr>
+                <td><code>Capture_Notes__c</code></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+                <td><span class="badge badge-yes">Yes</span></td>
+              </tr>
+              <tr>
+                <td>All other Lead fields</td>
+                <td><span class="badge badge-opt">Profile</span></td>
+                <td><span class="badge badge-no">No</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 4. Data Model ── -->
+    <section>
+      <h2>4 · Data Model &amp; Field Mapping</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Form field</th>
+            <th>Lead field</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>First Name</td>
+            <td><code>FirstName</code></td>
+            <td>Text</td>
+            <td><span class="badge badge-opt">Optional</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Last Name</td>
+            <td><code>LastName</code></td>
+            <td>Text</td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Email</td>
+            <td><code>Email</code></td>
+            <td>Email</td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td>Regex validated both layers</td>
+          </tr>
+          <tr>
+            <td>Phone</td>
+            <td><code>Phone</code></td>
+            <td>Phone</td>
+            <td><span class="badge badge-opt">Optional</span></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Company <em>(auto-filled)</em></td>
+            <td><code>Company</code></td>
+            <td>Text</td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td>Populated from Account.Name via wire</td>
+          </tr>
+          <tr>
+            <td>Lead Source</td>
+            <td><code>LeadSource</code></td>
+            <td>Picklist</td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td>Web · Phone Inquiry · Partner Referral · Other</td>
+          </tr>
+          <tr>
+            <td>Notes</td>
+            <td><code>Capture_Notes__c</code></td>
+            <td>Long Text (500)</td>
+            <td><span class="badge badge-opt">Optional</span></td>
+            <td>Custom field · char counter in UI</td>
+          </tr>
+          <tr>
+            <td><em>recordId (context)</em></td>
+            <td><code>Source_Account__c</code></td>
+            <td>Lookup → Account</td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td>
+              Custom field · injected by record page · SetNull on Account delete
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <span>greenField Project · Feature 002 — Account Lead Capture Form</span>
+      <span>Generated 2026-04-24</span>
+    </footer>
+  </body>
+</html>
